@@ -1,85 +1,76 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <v-app-bar
+      color="deep-purple-accent-4"
+      dark
+      elevation="4"
+      class="px-4"
+      v-if="userAuth.isUserLoggedIn"
+    >
+      <v-app-bar-nav-icon @click="toggleDrawer" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <v-img
+        src="../src/assets/images/ChatGPT Image Aug 6, 2025, 06_22_30 PM (1).png"
+        alt="VibeHub Logo"
+        max-height="100"
+        max-width="100"
+        contain
+        class="mr-2 d-flex logo-shadow"
+      />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+      <v-spacer></v-spacer>
 
-  <RouterView />
+      <div class="d-flex align-center gap-2">
+        <v-avatar size="36">
+          <v-img :src="userImage" alt="User" />
+        </v-avatar>
+        <span class="font-weight-medium text-white">{{ userName }}</span>
+        <v-btn icon="mdi-export" @click="logOut" />
+      </div>
+    </v-app-bar>
+
+    <v-main>
+      <RouterView />
+    </v-main>
+  </v-app>
 </template>
 
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { RouterView } from 'vue-router'
+import { useUserAuth } from './stores/userAuth'
+import { useUserContent } from './stores/userContent'
+import router from './router/router'
+
+const userAuth = useUserAuth()
+const userContent = useUserContent()
+
+const userName = ref(userContent.userName)
+const userImage = ref('https://i.pravatar.cc/300')
+
+const toggleDrawer = () => {
+  console.log('Drawer toggle clicked')
+}
+
+// ****logOut functionality ****
+
+const logOut = () => {
+  console.log('function logout work....')
+  userAuth.userLoggedInSuccessFully('', false)
+
+  router.push('/login')
+}
+
+// ******************
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.gap-2 {
+  gap: 8px;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.logo-shadow {
+  border-radius: 12px;
+  filter: drop-shadow(3px 3px 5px white);
 }
 </style>
