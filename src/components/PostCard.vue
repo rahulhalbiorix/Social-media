@@ -1,54 +1,88 @@
 <template>
-  <v-card elevation="2" class="h-100 d-flex flex-column" style="border: 2px solid black">
-    <v-card-title>{{ post.title }}</v-card-title>
-    <v-card-subtitle class="text-grey">Posted by: {{ post.user.userName }} </v-card-subtitle>
+  <!-- Full-width single column layout -->
 
-    <v-card-text>
-      <div class="description">{{ post.description }}</div>
-    </v-card-text>
+  <v-col cols="12">
+    <v-card elevation="4" class="d-flex flex-column rounded-lg overflow-hidden">
+      <!-- Post Title -->
+      <v-card-title class="text-h6 font-weight-bold">
+        {{ post.title }}
+      </v-card-title>
 
-    <v-spacer />
+      <!-- Post Author -->
+      <v-card-subtitle class="text-grey-darken-1 pb-2">
+        Posted by: <span class="font-weight-medium">{{ post.user.userName }}</span>
+      </v-card-subtitle>
 
-    <v-card-actions>
-      <v-btn icon variant="text" @click="toggleLike(post._id)">
-        <v-icon :color="likeButtonStore.isPostLiked(post._id) ? 'red' : 'grey'">
-          {{ likeButtonStore.isPostLiked(post._id) ? 'mdi-heart' : 'mdi-heart-outline' }}
-        </v-icon>
+      <!-- Post Description -->
+      <v-card-text class="pb-4">
+        <div class="description">{{ post.description }}</div>
+      </v-card-text>
 
-        <span class="ml-1"
-          >{{ likeButtonStore.isPostLiked(post._id) ? post.likesCount + 1 : post.likesCount }}
-        </span>
-      </v-btn>
+      <v-spacer />
 
-      <v-btn icon variant="text" @click="fetchComments(post._id)">
-        <v-icon>mdi-comment</v-icon>
-        <span class="ml-1">{{ post.commentsCount }}</span>
-      </v-btn>
+      <!-- Post Actions -->
+      <v-card-actions class="d-flex align-center justify-start gap-2">
+        <!-- Like Button -->
+        <v-btn icon variant="text" @click="toggleLike(post._id)">
+          <v-icon :color="likeButtonStore.isPostLiked(post._id) ? 'red' : 'grey'">
+            {{ likeButtonStore.isPostLiked(post._id) ? 'mdi-heart' : 'mdi-heart-outline' }}
+          </v-icon>
+          <span class="ml-1">
+            {{ likeButtonStore.isPostLiked(post._id) ? post.likesCount + 1 : post.likesCount }}
+          </span>
+        </v-btn>
 
-      <v-btn icon variant="text" color="blue">
-        <v-icon @click="editPost(post)">mdi-pencil</v-icon>
-      </v-btn>
+        <!-- Comment Button -->
+        <v-btn icon variant="text" @click="fetchComments(post._id)">
+          <v-icon>mdi-comment</v-icon>
+          <span class="ml-1">{{ post.commentsCount }}</span>
+        </v-btn>
 
-      <v-btn
-        icon
-        variant="text"
-        color="red"
-        v-if="post.user.userName === userContentStore.userName"
-      >
-        <v-icon @click="deletePost(post._id)">mdi-delete</v-icon>
-      </v-btn>
-    </v-card-actions>
+        <!-- Edit Button -->
+        <v-btn icon variant="text" color="blue" @click="editPost(post)">
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
 
-    <v-dialog max-width="600" v-model="showCommentSection">
-      <CommentSection
-        @close="showCommentSection = false"
-        @fetch-comment-list="fetchComments"
-        :comments="commentsTree"
-        :postId="post._id"
-      />
-    </v-dialog>
-  </v-card>
+        <!-- Delete Button (only for owner) -->
+        <v-btn
+          icon
+          variant="text"
+          color="red"
+          v-if="post.user.userName === userContentStore.userName"
+          @click="deletePost(post._id)"
+        >
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </v-card-actions>
+
+      <!-- Comment Dialog -->
+      <v-dialog max-width="600" v-model="showCommentSection">
+        <CommentSection
+          @close="showCommentSection = false"
+          @fetch-comment-list="fetchComments(post._id)"
+          :comments="commentsTree"
+          :postId="post._id"
+        />
+      </v-dialog>
+    </v-card>
+  </v-col>
 </template>
+
+<style scoped>
+.description {
+  white-space: pre-line;
+  font-size: 0.95rem;
+  color: #374151; /* dark gray */
+}
+
+.v-card {
+  transition: box-shadow 0.2s ease;
+}
+
+.v-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+</style>
 
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -76,6 +110,7 @@ const emit = defineEmits<{
   (e: 'edit', post: any): void
   (e: 'delete', postId: string): void
   (e: 'toggle-like', postId: string): void
+  (e: 'fetch-post-list'): void
 }>()
 
 function editPost(post: Post) {
@@ -100,14 +135,9 @@ async function fetchComments(postId: string) {
 
     showCommentSection.value = true
     commentsTree.value = res.data.data.commentsTree
+    emit('fetch-post-list')
   } catch (error) {
     console.log(error)
   }
 }
 </script>
-
-<style>
-.description {
-  white-space: pre-line;
-}
-</style>

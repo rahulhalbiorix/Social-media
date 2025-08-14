@@ -39,7 +39,7 @@
           :rules="[required, validUsername]"
           prepend-inner-icon="mdi-account"
           class="mb-3"
-        />{{ username }}
+        />
 
         <v-text-field
           label="Password"
@@ -49,7 +49,7 @@
           v-model="password"
           :rules="[required, validPassword]"
           prepend-inner-icon="mdi-lock-outline"
-        />{{ password }}
+        />
 
         <v-btn
           color="deep-purple-accent-4"
@@ -117,6 +117,7 @@ const login = async () => {
       if (res.data.success) {
         success(res.data.message)
       }
+
       contentStore.setUserName(res.data.data.userName)
       setTimeout(() => {
         router.push({ name: 'home' })

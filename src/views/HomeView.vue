@@ -1,16 +1,24 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="pa-6 bg-light">
     <post-list :posts="posts" @refresh="fetchPosts" />
   </v-container>
-  <!-- **********dialogue box for create and edit post************** -->
-  <v-dialog v-model="dialogueStore.showCreatePostPopUp">
-    <PostForm @refresh="fetchPosts"></PostForm>
+
+  <!-- ********** Dialogue box for create and edit post ************** -->
+  <v-dialog
+    v-model="dialogueStore.showCreatePostPopUp"
+    max-width="600"
+    transition="dialog-bottom-transition"
+  >
+    <PostForm min-width="600" @refresh="fetchPosts" />
   </v-dialog>
+
+  <!-- Floating Add Post Button -->
   <v-btn
     prepend-icon="mdi-plus"
     color="blue"
-    style="position: fixed; bottom: 20px; right: 20px"
+    class="floating-btn"
     rounded="xl"
+    elevation="6"
     @click="dialogueStore.showCreatePostPopUp = true"
   >
     Add New Post
@@ -26,7 +34,6 @@ import PostForm from '@/components/PostForm.vue'
 import { usePostDialgueBox } from '@/stores/usePostDialogue'
 
 const dialogueStore = usePostDialgueBox()
-
 const posts = ref<Post[]>([])
 
 const fetchPosts = async () => {
@@ -42,3 +49,22 @@ onMounted(() => {
   fetchPosts()
 })
 </script>
+
+<style scoped>
+.bg-light {
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.v-dialog {
+  border-radius: 12px;
+}
+</style>

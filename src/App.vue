@@ -7,8 +7,6 @@
       class="px-4"
       v-if="userAuth.isUserLoggedIn"
     >
-      <v-app-bar-nav-icon @click="toggleDrawer" />
-
       <v-img
         src="../src/assets/images/ChatGPT Image Aug 6, 2025, 06_22_30 PM (1).png"
         alt="VibeHub Logo"
@@ -24,7 +22,7 @@
         <v-avatar size="36">
           <v-img :src="userImage" alt="User" />
         </v-avatar>
-        <span class="font-weight-medium text-white">{{ userName }}</span>
+        <span class="font-weight-medium text-white">{{ userContent.userName }}</span>
         <v-btn icon="mdi-export" @click="logOut" />
       </div>
     </v-app-bar>
@@ -45,17 +43,11 @@ import router from './router/router'
 const userAuth = useUserAuth()
 const userContent = useUserContent()
 
-const userName = ref(userContent.userName)
 const userImage = ref('https://i.pravatar.cc/300')
-
-const toggleDrawer = () => {
-  console.log('Drawer toggle clicked')
-}
 
 // ****logOut functionality ****
 
 const logOut = () => {
-  console.log('function logout work....')
   userAuth.userLoggedInSuccessFully('', false)
 
   router.push('/login')

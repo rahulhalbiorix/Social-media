@@ -16,6 +16,9 @@ export const useUserContent = defineStore(
     }
   },
   {
-    persist: true,
+    persist: {
+      key: 'userContent',
+      storage: localStorage,
+    },
   },
 )

@@ -45,8 +45,24 @@ export const deleteCommentAPI = (id: any) =>
     headers: getAuthHeader(),
   })
 
+export const loadNestedReply = (parentId: string, commentId: string, page = 1, limit = 30) =>
+  axios.get(`${API_URL}/comments/load-more-replies`, {
+    headers: getAuthHeader(),
+    params: {
+      parentReplyId: parentId,
+      commentId: commentId,
+      page: page,
+      limit: limit,
+    },
+  })
+
 export const addReplyAPI = (replyMessage: any) =>
   axios.post(`${API_URL}/replies/add-reply`, replyMessage, {
+    headers: getAuthHeader(),
+  })
+
+export const deleteReplyAPI = (replyId: any) =>
+  axios.delete(`${API_URL}/replies/delete/${replyId}`, {
     headers: getAuthHeader(),
   })
 

@@ -16,7 +16,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(Vue3Toastify, {
   position: 'top-right',
-  timeout: 3000,
+  timeout: 1500,
   closeOnClick: true,
   pauseOnHover: true,
 })

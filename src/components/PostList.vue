@@ -1,12 +1,42 @@
 <template>
-  <v-container fluid style="border: 2px solid red">
-    <v-row dense>
-      <v-col v-for="post in posts" :key="post._id" cols="12" sm="6" md="4">
-        <PostCard :post="post" @edit="editPost" @delete="deletePost" @toggle-like="toggleLike" />
+  <v-container fluid class="pa-4">
+    <v-row dense class="d-flex justify-center">
+      <v-col v-for="post in posts" :key="post._id" cols="12" class="d-flex justify-center">
+        <PostCard
+          :post="post"
+          @edit="editPost"
+          @delete="deletePost"
+          @toggle-like="toggleLike"
+          @fetch-post-list="emit('refresh')"
+          class="w-100"
+        />
       </v-col>
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.v-container {
+  background-color: #f9fafb; /* light neutral background */
+  border-radius: 8px;
+}
+
+.v-row {
+  row-gap: 16px; /* spacing between rows */
+}
+
+.v-col {
+  max-width: 800px; /* keep post card nicely centered */
+}
+
+.PostCard {
+  transition: box-shadow 0.25s ease;
+}
+
+.PostCard:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+</style>
 
 <script setup lang="ts">
 import PostCard from './PostCard.vue'
@@ -48,7 +78,7 @@ async function deletePost(postId: string) {
 
     emit('refresh')
   } catch (error) {
-    console.log('phases issues in delete post', error)
+    console.log(error)
   }
 }
 
@@ -73,12 +103,3 @@ async function toggleLike(postId: string) {
   }
 }
 </script>
-
-<style>
-.fab-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 1000;
-}
-</style>
